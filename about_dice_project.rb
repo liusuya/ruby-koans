@@ -2,9 +2,14 @@ require File.expand_path(File.dirname(__FILE__) + '/neo')
 
 # Implement a DiceSet Class here:
 #
-# class DiceSet
-#   code ...
-# end
+class DiceSet
+
+  attr_accessor :values
+
+  def roll(times)
+    @values = Array.new(times) { rand(1..6) }
+  end
+end
 
 class AboutDiceProject < Neo::Koan
   def test_can_create_a_dice_set
@@ -23,6 +28,8 @@ class AboutDiceProject < Neo::Koan
     end
   end
 
+  # why is this passing?
+  # oh! because im only calling the roll function once lol
   def test_dice_values_do_not_change_unless_explicitly_rolled
     dice = DiceSet.new
     dice.roll(5)
@@ -41,13 +48,29 @@ class AboutDiceProject < Neo::Koan
     second_time = dice.values
 
     assert_not_equal first_time, second_time,
-      "Two rolls should not be equal"
+                     "Two rolls should not be equal"
+    assert_not_equal first_time.object_id, second_time.object_id, "Two rolls should have different array objects"
 
     # THINK ABOUT IT:
     #
     # If the rolls are random, then it is possible (although not
     # likely) that two consecutive rolls are equal.  What would be a
     # better way to test this?
+    # one way of testing this would be to check that the 2 arrays are different objects
+    # but this then becomes an implementation detail that's been exposed. eg. you should be able to update the values in place
+    # the internet gives a very good argument that since it's probabilistically very low for each consecutive roll to have the
+    # same result, that one can keep rolling within a certain time period and expect that you will eventually get a roll thats
+    # different
+  end
+
+  def test_dice_values_should_change_between_rolls_fancier
+    dice = DiceSet.new
+
+    dice.roll(5)
+    first_time = dice.values
+
+    dice.roll(5)
+    second_time = dice.values
   end
 
   def test_you_can_roll_different_numbers_of_dice
