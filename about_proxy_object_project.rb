@@ -16,29 +16,14 @@ class Proxy
   def initialize(target_object)
     @object = target_object
     @messages = Hash.new(0)
-    # ADD MORE CODE HERE
   end
 
   def method_missing(method_name, *args, &block)
+    # note that although all the tests pass, this is probably not the best implementation of
+    # tracking all the messages. ie all the named methods will not be traced (eg called?)
     @messages[method_name] += 1
-    if @object.respond_to?(method_name)
-      @object.__send__(method_name, *args, &block)
-    else
-      super(method_name, *args, &block)
-    end
+    @object.__send__(method_name, *args, &block)
   end
-
-  # def respond_to?(method_name)
-  #   @object.respond_to?(method_name)
-  # end
-  #
-  # def __send__(method_name, *args, &block)
-  #   @object.__send__(method_name, *args, &block)
-  # end
-  #
-  # def send(method_name, *args, &block)
-  #   __send__(method_name, *args, &block)
-  # end
 
   def messages
     @messages.keys
