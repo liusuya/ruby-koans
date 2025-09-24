@@ -180,6 +180,8 @@ class AboutMessagePassing < Neo::Koan
 
   # (note: just reopening class from above)
   # TODO: can i use respond_to_missing instead?
+  # oh... does respond_to_missing not take a method name? that actually makes sense
+  # so i can't do anything fancy using respond_to_missing is what im gathering
   class WellBehavedFooCatcher
     def respond_to?(method_name)
       if method_name.to_s[0, 3] == "foo"

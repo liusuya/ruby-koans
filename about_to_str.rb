@@ -10,13 +10,17 @@ class AboutToStr < Neo::Koan
 
   def test_to_s_returns_a_string_representation
     not_like_a_string = CanNotBeTreatedAsString.new
-    assert_equal __, not_like_a_string.to_s
+    assert_equal "non-string-like", not_like_a_string.to_s
   end
 
+  # so the following means File.exist? expects a string, and even through
+  # CanNotBeTreatedAsString.new has the to_s function, it on itself is not a string
   def test_normally_objects_cannot_be_used_where_strings_are_expected
-    assert_raise(___) do
+    assert_raise(TypeError) do
       File.exist?(CanNotBeTreatedAsString.new)
     end
+
+    assert_equal CanNotBeTreatedAsString, CanNotBeTreatedAsString.new.class
   end
 
   # ------------------------------------------------------------------
@@ -33,11 +37,15 @@ class AboutToStr < Neo::Koan
 
   def test_to_str_also_returns_a_string_representation
     like_a_string = CanBeTreatedAsString.new
-    assert_equal __, like_a_string.to_str
+    assert_equal "string-like", like_a_string.to_str
   end
 
   def test_to_str_allows_objects_to_be_treated_as_strings
-    assert_equal __, File.exist?(CanBeTreatedAsString.new)
+    assert_equal false, File.exist?(CanBeTreatedAsString.new)
+
+    # huh... the following is in fact false...
+    # assert_equal ::String, CanBeTreatedAsString.new.class
+    # so it can be treated like a string, but is not of class string
   end
 
   # ------------------------------------------------------------------
@@ -48,7 +56,7 @@ class AboutToStr < Neo::Koan
   end
 
   def test_user_defined_code_can_check_for_to_str
-    assert_equal __, acts_like_a_string?(CanNotBeTreatedAsString.new)
-    assert_equal __,  acts_like_a_string?(CanBeTreatedAsString.new)
+    assert_equal false, acts_like_a_string?(CanNotBeTreatedAsString.new)
+    assert_equal true, acts_like_a_string?(CanBeTreatedAsString.new)
   end
 end
